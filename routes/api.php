@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\V1\UserController;
 use App\Http\Controllers\V1\AuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -10,5 +11,8 @@ Route::prefix("v1")->group(function(){
     Route::middleware("auth:sanctum")->group(function(){
         Route::post("logout", [AuthController::class, "logout"]);
         Route::get("me", [AuthController::class, "me"]);
+
+        // User
+        Route::get("users", [UserController::class, "index"])->middleware("permission:LIST_USER");
     });
 });
