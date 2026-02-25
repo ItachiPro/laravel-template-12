@@ -4,6 +4,7 @@ namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
@@ -11,6 +12,8 @@ use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
+    use ApiResponse;
+
     public function register(Request $request)
     {
         $validated = $request->validate([
@@ -29,10 +32,10 @@ class AuthController extends Controller
 
         $token = $user->createToken("api-token")->plainTextToken;
 
-        return response()->json([
+        return $this->success([
             "user" => $user,
             "token" => $token
-        ], 201);
+        ], "User registered successfully.", 201);
     }
 
     public function login(Request $request)
@@ -43,32 +46,40 @@ class AuthController extends Controller
         ]);
 
         if(!Auth::attempt($request->only("email", "password"))){
-            throw ValidationException::withMessages([
-                "email" => ["Invalid credentials"]
-            ]);
+            return $this->error(
+                "Invalid credentials.",
+                ["email" => ["Invalid credentials"]],
+                401
+            );
         }
 
         $user = User::where("email", $request->email)->firstOrFail();
 
         $token = $user->createToken("api-token")->plainTextToken;
 
-        return response()->json([
+        return $this->success([
             "user" => $user,
-            "token" => $token,
-        ]);
+            "token" => $token
+        ], "User logged.", 200);
     }
 
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
 
-        return response()->json([
-            "message" => "Logged out successfully"
-        ]);
+        return $this->success(
+            null,
+            "Logout successfully.",
+            200
+        );
     }
 
     public function me(Request $request)
     {
-        return response()->json($request->user());
+        return $this->success(
+            $request->user(),
+            "User authenticate.",
+            200
+        );
     }
 }
