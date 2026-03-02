@@ -18,6 +18,8 @@ Route::prefix("v1")->group(function(){
 
         // Role
         Route::get("roles", [RoleController::class, "index"])->middleware("permissions:LIST_ROLE");
+        Route::post("users/{id}/roles", [UserController::class, "assignRoles"])->middleware("permissions:UPDATE_USER");
+        Route::post("roles/{id}/permissions", [RoleController::class, "assignPermissions"])->middleware("permissions:UPDATE_ROLE");
         Route::group(["prefix" => "role"], function(){
             Route::post("/", [RoleController::class, "store"])->middleware("permissions:CREATE_ROLE");
             Route::delete("/{id}", [RoleController::class, "destroy"])->middleware("permissions:DELETE_ROLE");

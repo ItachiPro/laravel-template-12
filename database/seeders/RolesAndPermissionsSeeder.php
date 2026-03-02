@@ -17,33 +17,71 @@ class RolesAndPermissionsSeeder extends Seeder
     {
         app()[PermissionRegistrar::class]->forgetCachedPermissions();
 
-        $permissions = [
-            "LIST_USER",
-            "CREATE_USER",
-            "UPDATE_USER",
-            "DELETE_USER",
-            "SHOW_USER",
-            "LIST_ROLE",
-            "CREATE_ROLE",
-            "UPDATE_ROLE",
-            "DELETE_ROLE",
-            "SHOW_ROLE",
-            "LIST_PERMISSION",
-            "CREATE_PERMISSION",
-            "UPDATE_PERMISSION",
-            "DELETE_PERMISSION",
-            "SHOW_PERMISSION",
+        // Permissions grouped by module
+        $modules = [
+            "USER" => [
+                "LIST",
+                "SHOW",
+                "CREATE",
+                "UPDATE",
+                "DELETE",
+                "ASSIGN_ROLE",
+                "REMOVE_ROLE",
+            ],
+            "ROLE" => [
+                "LIST",
+                "SHOW",
+                "CREATE",
+                "UPDATE",
+                "DELETE",
+                "ASSIGN_PERMISSION",
+                "REMOVE_PERMISSION",
+            ],
+            "PERMISSIONS" => [
+                "LIST",
+                "SHOW",
+                "CREATE",
+                "UPDATE",
+                "DELETE",
+            ],
         ];
 
-        foreach($permissions as $permission){
-            Permission::firstOrCreate(["name" => $permission]);
+        $permissions = collect();
+
+        foreach($modules as $module => $actions){
+            foreach($actions as $action){
+                $permissionName = "{$action}_{$module}";
+
+                $permissions->push(
+                    Permission::firstOrCreate([
+                        "name" => $permissionName
+                    ])
+                );
+            }
         }
 
-        $admin = Role::firstOrCreate(["name" => "admin"]);
-        $user = Role::firstOrCreate(["name" => "user"]);
+        // Roles
+        $superAdmin = Role::firstOrCreate(["name" => "SUPER_ADMIN"]);
+        $admin      = Role::firstOrCreate(["name" => "ADMIN"]);
+        $manager    = Role::firstOrCreate(["name" => "MANAGER"]);
+        $user       = Role::firstOrCreate(["name" => "USER"]);
 
-        $admin->givePermissionTo(Permission::all());
+        // ADMIN have all permissions
+        $admin->syncPermissions($permissions);
 
-        $user->givePermissionTo("SHOW_USER");
+        // MANAGER all except DELETE and advanced management
+        $managerPermissions = $permissions->filter(function ($permission) {
+            return !str_starts_with($permission->name, "DELETE_")
+                && !str_contains($permission->name, "ASSIGN_PERMISSION");
+        });
+
+        $manager->syncPermissions($managerPermissions);
+
+        // USER only has LIST and SHOW
+        $userPermissions = $permissions->filter(function ($permission) {
+            return str_starts_with($permission->name, "LIST_") || str_starts_with($permission->name, "SHOW_");
+        });
+
+        $user->syncPermissions($userPermissions);
     }
 }
