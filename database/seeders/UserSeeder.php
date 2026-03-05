@@ -20,7 +20,7 @@ class UserSeeder extends Seeder
                 "email" => "wltrstnly@hotmail.com",
             ],
             [
-                "name" => "SUPER_ADMIN", 
+                "name" => "SUPER ADMIN", 
                 "password" => Hash::make(env("SUPER_ADMIN_PASSWORD","12345678")),
             ]
         );

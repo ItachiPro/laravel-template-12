@@ -20,6 +20,13 @@ class RoleController extends Controller
         return $this->success($roles, "OK", 200);
     }
 
+    public function show($id)
+    {
+        $role = Role::with("permissions")->findOrFail($id);
+
+        return $this->success($role, "Role retrieved successfully.", 200);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -46,6 +53,19 @@ class RoleController extends Controller
         $role->syncPermissions($validated["permissions"]);
 
         return $this->success($role->load("permissions"), "Permissions added successfully.", 200);
+    }
+
+    public function update(Request $request, $id)
+    {
+        $validated = $request->validate([
+            "name" => "required|string|unique:roles,name"
+        ]);
+        
+        $role = Role::findOrFail($id);
+
+        $role->update($validated);
+
+        return $this->success($role, "Role updated successfully.", 200);
     }
 
     public function destroy($id)

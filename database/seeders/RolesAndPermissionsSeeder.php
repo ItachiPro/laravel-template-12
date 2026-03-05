@@ -37,7 +37,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 "ASSIGN_PERMISSION",
                 "REMOVE_PERMISSION",
             ],
-            "PERMISSIONS" => [
+            "PERMISSION" => [
                 "LIST",
                 "SHOW",
                 "CREATE",
