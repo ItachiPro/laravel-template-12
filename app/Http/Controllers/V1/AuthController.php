@@ -34,8 +34,17 @@ class AuthController extends Controller
 
         return $this->success([
             "user" => $user,
-            "token" => $token
-        ], "User registered successfully.", 201);
+        ], "User registered successfully.", 201)->cookie(
+            "token",
+            $token,
+            60 * 24 * 7, // 7 days
+            "/",
+            null,
+            false, // secure (true en https)
+            true, // httpOnly
+            false,
+            "Lax"
+        );
     }
 
     public function login(Request $request)
@@ -59,8 +68,17 @@ class AuthController extends Controller
 
         return $this->success([
             "user" => $user,
-            "token" => $token
-        ], "User logged.", 200);
+        ], "User logged.", 200)->cookie(
+            "token",
+            $token,
+            60 * 24 * 7, // 7 days
+            "/",
+            null,
+            false, // secure (true en https)
+            true, // httpOnly
+            false,
+            "Lax"
+        );
     }
 
     public function logout(Request $request)
@@ -71,6 +89,10 @@ class AuthController extends Controller
             null,
             "Logout successfully.",
             200
+        )->cookie(
+            "token",
+            "",
+            -1
         );
     }
 
