@@ -9,22 +9,20 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionController extends Controller
 {
-    use ApiResponse;
-
     public function index(Request $request)
     {
         $per_page = $request->query("per_page") ?? 10;
 
         $permissions = Permission::with("roles")->paginate($per_page);
 
-        return $this->success($permissions, "OK", 200);
+        return ApiResponse::successResponse($permissions, "OK", 200);
     }
 
     public function show($id)
     {
         $permission = Permission::with("roles")->findOrFail($id);
 
-        return $this->success($permission, "Permission retrieved successfully.", 200);
+        return ApiResponse::successResponse($permission, "Permission retrieved successfully.", 200);
     }
 
     public function store(Request $request)
@@ -38,7 +36,7 @@ class PermissionController extends Controller
             "guard_name" => "web"
         ]);
 
-        return $this->success($permission, "Permission created successfully.", 201);
+        return ApiResponse::successResponse($permission, "Permission created successfully.", 201);
     }
 
     public function update(Request $request, $id)
@@ -51,13 +49,13 @@ class PermissionController extends Controller
 
         $permission->update($validated);
 
-        return $this->success($permission, "Permission updated successfully.", 200);
+        return ApiResponse::successResponse($permission, "Permission updated successfully.", 200);
     }
 
     public function destroy($id)
     {
         Permission::findOrFail($id)->delete();
 
-        return $this->success(null, "Permission deleted.", 200);
+        return ApiResponse::successResponse(null, "Permission deleted.", 200);
     }
 }

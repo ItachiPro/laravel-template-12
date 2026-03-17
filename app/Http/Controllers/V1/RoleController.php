@@ -9,22 +9,20 @@ use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
-    use ApiResponse;
-
     public function index(Request $request)
     {
         $per_page = $request->query("per_page") ?? 10;
 
         $roles = Role::with("permissions")->paginate($per_page);
 
-        return $this->success($roles, "OK", 200);
+        return ApiResponse::successResponse($roles, "OK", 200);
     }
 
     public function show($id)
     {
         $role = Role::with("permissions")->findOrFail($id);
 
-        return $this->success($role, "Role retrieved successfully.", 200);
+        return ApiResponse::successResponse($role, "Role retrieved successfully.", 200);
     }
 
     public function store(Request $request)
@@ -38,7 +36,7 @@ class RoleController extends Controller
             "guard_name" => "web"
         ]);
 
-        return $this->success($role, "Role created successfully.", 201);
+        return ApiResponse::successResponse($role, "Role created successfully.", 201);
     }
 
     public function assignPermissions(Request $request, $id)
@@ -52,7 +50,7 @@ class RoleController extends Controller
 
         $role->syncPermissions($validated["permissions"]);
 
-        return $this->success($role->load("permissions"), "Permissions added successfully.", 200);
+        return ApiResponse::successResponse($role->load("permissions"), "Permissions added successfully.", 200);
     }
 
     public function update(Request $request, $id)
@@ -65,13 +63,13 @@ class RoleController extends Controller
 
         $role->update($validated);
 
-        return $this->success($role, "Role updated successfully.", 200);
+        return ApiResponse::successResponse($role, "Role updated successfully.", 200);
     }
 
     public function destroy($id)
     {
         Role::findOrFail($id)->delete();
 
-        return $this->success(null, "Rol deleted.", 200);
+        return ApiResponse::successResponse(null, "Rol deleted.", 200);
     }
 }

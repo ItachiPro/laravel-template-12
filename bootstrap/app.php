@@ -1,5 +1,6 @@
 <?php
 
+use App\Traits\ApiResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -33,67 +34,61 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->render(function (UnauthorizedException $e, Request $request){
             if($request->is("api/*")){
-                return response()->json([
-                    "success" => false,
-                    "message" => "User does not have the right permissions.",
-                    "data" => null,
-                    "errors" => null
-                ], 403);
+                return ApiResponse::errorResponse(
+                    "User does not have the right permissions.",
+                    null,
+                    Response::HTTP_FORBIDDEN
+                );
             }
         });
 
         $exceptions->render(function (ValidationException $e, Request $request){
             if($request->is("api/*")){
-                return response()->json([
-                    "success" => false,
-                    "message" => "Validation error.",
-                    "data" => null,
-                    "errors" => $e->errors(),
-                ], Response::HTTP_UNPROCESSABLE_ENTITY);
+                return ApiResponse::errorResponse(
+                    "Validation error.",
+                    $e->errors(),
+                    Response::HTTP_UNPROCESSABLE_ENTITY
+                );
             }
         });
 
         $exceptions->render(function (AuthenticationException $e, Request $request){
             if($request->is("api/*")){
-                return response()->json([
-                    "success" => false,
-                    "message" => "Unauthenticated.",
-                    "data" => null,
-                    "errors" => null,
-                ], 401);
+                return ApiResponse::errorResponse(
+                    "Unauthenticated.",
+                    null,
+                    Response::HTTP_UNAUTHORIZED
+                );
             }
         });
 
         $exceptions->render(function (NotFoundHttpException $e, Request $request) {
             if ($request->is("api/*")) {
-                return response()->json([
-                    "success" => false,
-                    "message" => "Resource not found.",
-                    "data" => null,
-                    "errors" => null,
-                ], 404);
+                return ApiResponse::errorResponse(
+                    "Resource not found.",
+                    null,
+                    Response::HTTP_NOT_FOUND
+                );
             }
         });
 
         $exceptions->render(function (HttpException $e, Request $request) {
             if ($request->is("api/*")) {
-                return response()->json([
-                    "success" => false,
-                    "message" => $e->getMessage() ?: "HTTP error.",
-                    "data" => null,
-                    "errors" => null,
-                ], $e->getStatusCode());
+                return ApiResponse::errorResponse(
+                    $e->getMessage() ?: "HTTP error.",
+                    null,
+                    $e->getStatusCode()
+                );
             }
         });
 
         $exceptions->render(function (Throwable $e, Request $request) {
             if ($request->is("api/*")) {
-                return response()->json([
-                    "success" => false,
-                    "message" => "Server error.",
-                    "data" => null,
-                    "errors" => config('app.debug') ? $e->getMessage() : null,
-                ], 500);
+                return ApiResponse::errorResponse(
+                    "Server error.",
+                    config('app.debug') ? $e->getMessage() : null,
+                    Response::HTTP_INTERNAL_SERVER_ERROR
+                );
             }
         });
     })->create();
