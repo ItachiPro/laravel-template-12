@@ -7,7 +7,7 @@ use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class StoreUserRequest extends FormRequest
+class AssignRolesRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -25,26 +25,17 @@ class StoreUserRequest extends FormRequest
     public function rules(): array
     {
         return [
-            "name" => "required|string|min:4|max:25",
-            "email" => "required|string|email|unique:users",
-            "password" => "required|string|min:8"
+            "roles" => "required|array",
+            "roles.*" => "exists:roles,name"
         ];
     }
 
     public function messages(): array
     {
         return [
-            "name.required" => "Name is requires.",
-            "name.string" => "Name must be string.",
-            "name.min" => "Name must be at least 5 characters.",
-            "name.max" => "Name must be not exceed 25 characters.",
-            "email.required" => "Email is required.",
-            "email.string" => "Email must be string.",
-            "email.email" => "Email is not valid.",
-            "email.unique" => "Email is already registered.",
-            "password.required" => "Password is required.",
-            "password.string" => "Password must be string.",
-            "password.min" => "Password must be at least 6 characters.",
+            "roles.required" => "At least one role is required.",
+            "roles.array" => "The roles field must be an array.",
+            "roles.*.exists" => "The selected role (:input) is invalid."
         ];
     }
 

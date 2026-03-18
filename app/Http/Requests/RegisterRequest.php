@@ -45,10 +45,11 @@ class RegisterRequest extends FormRequest
             "password.required" => "Password is required.",
             "password.string" => "Password must be string.",
             "password.min" => "Password must be at least 6 characters.",
+            "password.confirmed" => "Password confirmation does not match."
         ];
     }
 
-    public function failedValidation(Validator $validator)
+    protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();
 
