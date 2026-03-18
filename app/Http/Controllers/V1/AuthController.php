@@ -56,6 +56,7 @@ class AuthController extends Controller
 
         return ApiResponse::successResponse([
             "user" => $user,
+            "token" => $token,
         ], "User logged.", 200)->cookie(
             "token",
             $token,

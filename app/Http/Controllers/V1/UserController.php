@@ -3,6 +3,9 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AssignRolesRequest;
+use App\Http\Requests\StoreUserRequest;
+use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
@@ -12,19 +15,24 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $per_page = $request->query("per_page") ?? 10;
+        $per_page = min($request->query("per_page", 10), 100);
 
-        $users = User::paginate($per_page);
+        $users = User::orderBy("id", "desc")->paginate($per_page);
 
-        return ApiResponse::successResponse($users, "OK", 200);
+        return ApiResponse::successResponse($users, "Users retrieved successfully.", 200);
     }
 
-    public function store(Request $request)
+    public function show($id)
     {
-        $validated = $request->validate([
-            
-        ]);
-        
+        $user = User::with("roles")->findOrFail($id);
+
+        return ApiResponse::successResponse($user, "User retrieved successfully.", 200);
+    }
+
+    public function store(StoreUserRequest $request)
+    {
+        $validated = $request->validated();
+
         $user = User::create([
             "name" => $validated["name"],
             "email" => $validated["email"],
@@ -34,19 +42,9 @@ class UserController extends Controller
         return ApiResponse::successResponse($user, "User created successfully.", 201);
     }
 
-    public function show($id)
+    public function assignRoles(AssignRolesRequest $request, $id)
     {
-        $user = User::findOrFail($id)->with("roles")->first();
-
-        return ApiResponse::successResponse($user, "User retrieved successfully.", 200);
-    }
-
-    public function assignRoles(Request $request, $id)
-    {
-        $validated = $request->validate([
-            "roles" => "required|array",
-            "roles.*" => "exists:roles,name"
-        ]);
+        $validated = $request->validated();
         
         $user = User::findOrFail($id);
 
@@ -55,13 +53,15 @@ class UserController extends Controller
         return ApiResponse::successResponse($user->load("roles"), "Roles assigned successfully.", 200);
     }
 
-    public function update(Request $request, $id)
+    public function update(UpdateUserRequest $request, $id)
     {
-        $validated = $request->validate([
-            "name" => "required|string|min:4|max:255",
-        ]);
+        $validated = $request->validated();
 
         $user = User::findOrFail($id);
+        
+        if(isset($validated["password"])){
+            $validated["password"] = Hash::make($validated["password"]);
+        }
 
         $user->update($validated);
 
@@ -72,6 +72,6 @@ class UserController extends Controller
     {
         User::findOrFail($id)->delete();
 
-        return ApiResponse::successResponse(null, "User deleted.", 200);
+        return ApiResponse::deletedResponse();
     }
 }

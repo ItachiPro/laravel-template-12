@@ -25,4 +25,9 @@ trait ApiResponse
             "errors" => null
         ], $code);
     }
+
+    public static function deletedResponse()
+    {
+        return response()->noContent();
+    }
 }
