@@ -27,17 +27,7 @@ class AuthController extends Controller
 
         return ApiResponse::successResponse([
             "user" => $user,
-        ], "User registered successfully.", 201)->cookie(
-            "token",
-            $token,
-            60 * 24 * 7, // 7 days
-            "/",
-            null,
-            false, // secure (true en https)
-            true, // httpOnly
-            false,
-            "Lax"
-        );
+        ], "User registered successfully.", 201);
     }
 
     public function login(LoginRequest $request)
@@ -57,17 +47,7 @@ class AuthController extends Controller
         return ApiResponse::successResponse([
             "user" => $user,
             "token" => $token,
-        ], "User logged.", 200)->cookie(
-            "token",
-            $token,
-            60 * 24 * 7, // 7 days
-            "/",
-            null,
-            false, // secure (true en https)
-            true, // httpOnly
-            false,
-            "Lax"
-        );
+        ], "User logged.", 200);
     }
 
     public function logout(Request $request)
@@ -76,12 +56,8 @@ class AuthController extends Controller
 
         return ApiResponse::successResponse(
             null,
-            "Logout successfully.",
+            "Logged out.",
             200
-        )->cookie(
-            "token",
-            "",
-            -1
         );
     }
 

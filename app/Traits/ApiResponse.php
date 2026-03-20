@@ -2,8 +2,6 @@
 
 namespace App\Traits;
 
-use Illuminate\Http\JsonResponse;
-
 trait ApiResponse
 {
     public static function errorResponse($message, $errors = null, $code = 400)
