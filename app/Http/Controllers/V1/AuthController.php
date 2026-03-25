@@ -64,9 +64,16 @@ class AuthController extends Controller
 
     public function me(Request $request)
     {
-        return ApiResponse::successResponse(
-            $request->user(),
-            "User authenticate.",
+        $user = $request->user();
+
+        return ApiResponse::successResponse([
+                "id" => $user->id,
+                "name" => $user->name,
+                "email" => $user->email,
+                "roles" => $user->getRoleNames(),
+                "permissions" => $user->getAllPermissions()->pluck("name"),
+            ],
+            "User authenticated.",
             200
         );
     }
