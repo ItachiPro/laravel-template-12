@@ -27,6 +27,7 @@ class AuthController extends Controller
 
         return ApiResponse::successResponse([
             "user" => $user,
+            "token" => $token,
         ], "User registered successfully.", 201);
     }
 

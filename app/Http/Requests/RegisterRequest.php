@@ -49,6 +49,13 @@ class RegisterRequest extends FormRequest
         ];
     }
 
+    protected function prepareForValidation()
+    {
+        $this->merge([
+            "password_confirmation" => $this->passwordConfirmation,
+        ]);
+    }
+
     protected function failedValidation(Validator $validator)
     {
         $errors = $validator->errors();
