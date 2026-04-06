@@ -27,8 +27,15 @@ class AuthController extends Controller
 
         return ApiResponse::successResponse([
             "user" => $user,
-            "token" => $token,
-        ], "User registered successfully.", 201);
+        ], "User registered successfully.", 201)->cookie(
+            "token",
+            $token,
+            60 * 24,
+            "/",
+            null,
+            false,
+            true
+        );
     }
 
     public function login(LoginRequest $request)
@@ -47,8 +54,15 @@ class AuthController extends Controller
 
         return ApiResponse::successResponse([
             "user" => $user,
-            "token" => $token,
-        ], "User logged.", 200);
+        ], "User logged.", 200)->cookie(
+            "token",
+            $token,
+            60 * 24,
+            "/",
+            null,
+            false,
+            true
+        );
     }
 
     public function logout(Request $request)
@@ -59,7 +73,7 @@ class AuthController extends Controller
             null,
             "Logged out.",
             200
-        );
+        )->cookie("token", "", -1);
     }
 
     public function me(Request $request)

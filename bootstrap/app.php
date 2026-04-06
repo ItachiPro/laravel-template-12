@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Middleware\AttachTokenFromCookie;
 use App\Traits\ApiResponse;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Foundation\Application;
@@ -25,6 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->append(HandleCors::class);
+        $middleware->append(AttachTokenFromCookie::class);
         $middleware->alias([
             "permission" => PermissionMiddleware::class,
             "role" => RoleMiddleware::class,
