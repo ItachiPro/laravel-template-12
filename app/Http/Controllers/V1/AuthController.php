@@ -50,6 +50,14 @@ class AuthController extends Controller
 
         $user = User::where("email", $request->email)->firstOrFail();
 
+        if($user->roles()->count() === 0){
+            return ApiResponse::errorResponse(
+                "You account is not configured yet.",
+                [],
+                403
+            );
+        }
+
         $token = $user->createToken("api-token")->plainTextToken;
 
         return ApiResponse::successResponse([

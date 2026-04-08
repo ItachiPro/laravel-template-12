@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
@@ -17,7 +18,13 @@ class UserController extends Controller
     {
         $per_page = min($request->query("per_page", 10), 100);
 
-        $users = User::orderBy("id", "desc")->paginate($per_page);
+        $users = User::query()
+            ->where("id", "!=", Auth::id())
+            ->whereDoesntHave("roles", function ($query) {
+                $query->where("name", "SUPER_ADMIN");
+            })
+            ->orderBy("id", "desc")
+            ->paginate($per_page);
 
         return ApiResponse::successResponse($users, "Users retrieved successfully.", 200);
     }
