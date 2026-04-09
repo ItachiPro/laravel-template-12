@@ -25,8 +25,8 @@ class RolesAndPermissionsSeeder extends Seeder
                 "CREATE",
                 "UPDATE",
                 "DELETE",
-                "ASSIGN_ROLE",
-                "REMOVE_ROLE",
+                "ASSIGN_ROLE_USER",
+                "ASSIGN_PERMISSION_USER",
             ],
             "ROLE" => [
                 "LIST",
@@ -34,8 +34,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 "CREATE",
                 "UPDATE",
                 "DELETE",
-                "ASSIGN_PERMISSION",
-                "REMOVE_PERMISSION",
+                "ASSIGN_PERMISSION_ROLE",
             ],
             "PERMISSION" => [
                 "LIST",
@@ -61,7 +60,7 @@ class RolesAndPermissionsSeeder extends Seeder
         }
 
         // Roles
-        $superAdmin = Role::firstOrCreate(["name" => "SUPER_ADMIN"]);
+        Role::firstOrCreate(["name" => "SUPER_ADMIN"]);
         $admin      = Role::firstOrCreate(["name" => "ADMIN"]);
         $manager    = Role::firstOrCreate(["name" => "MANAGER"]);
         $user       = Role::firstOrCreate(["name" => "USER"]);
@@ -72,7 +71,7 @@ class RolesAndPermissionsSeeder extends Seeder
         // MANAGER all except DELETE and advanced management
         $managerPermissions = $permissions->filter(function ($permission) {
             return !str_starts_with($permission->name, "DELETE_")
-                && !str_contains($permission->name, "ASSIGN_PERMISSION");
+                && !str_contains($permission->name, "ASSIGN_PERMISSION_ROLE");
         });
 
         $manager->syncPermissions($managerPermissions);
