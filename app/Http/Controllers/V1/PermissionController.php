@@ -13,9 +13,14 @@ class PermissionController extends Controller
 {
     public function index(Request $request)
     {
+        $pagination = filter_var($request->query("pagination", true), FILTER_VALIDATE_BOOLEAN);
         $per_page = min($request->query("per_page", 10), 100);
 
-        $permissions = Permission::with("roles")->orderBy("id", "desc")->paginate($per_page);
+        $permissions = Permission::when($pagination, function($query) use ($per_page){
+            return $query->orderBy("id", "desc")->paginate($per_page);
+        }, function($query){
+            return $query->orderBy("id", "desc")->get();
+        });
 
         return ApiResponse::successResponse($permissions, "Permissions retrieved successfully.", 200);
     }
