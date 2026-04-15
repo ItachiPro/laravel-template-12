@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\AssignPermissionsRequest;
 use App\Http\Requests\AssignRolesRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
@@ -58,6 +59,17 @@ class UserController extends Controller
         $user->syncRoles($validated["roles"]);
 
         return ApiResponse::successResponse($user->load("roles"), "Roles assigned successfully.", 200);
+    }
+
+    public function assignPermissions(AssignPermissionsRequest $request, $id)
+    {
+        $validated = $request->validated();
+
+        $user = User::findOrFail($id);
+
+        $user->syncPermissions($validated["permissions"]);
+
+        return ApiResponse::successResponse($user->load("permissions"), "Permissions assigned successfully", 200);
     }
 
     public function update(UpdateUserRequest $request, $id)

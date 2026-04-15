@@ -26,7 +26,7 @@ class AssignPermissionsRequest extends FormRequest
     {
         return [
             "permissions" => "required|array",
-            "permissions.*" => "exists:permissions,name"
+            "permissions.*" => "exists:permissions,id"
         ];
     }
 
@@ -35,7 +35,7 @@ class AssignPermissionsRequest extends FormRequest
         return [
             "permissions.required" => "At least one permission is required.",
             "permissions.array" => "The permissions field must be an array.",
-            "permissions.*.exists" => "The selected permissions (:input) is invalid."
+            "permissions.*.exists" => "One or more selected permissions are invalid."
         ];
     }
 

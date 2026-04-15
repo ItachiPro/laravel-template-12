@@ -26,7 +26,7 @@ class AssignRolesRequest extends FormRequest
     {
         return [
             "roles" => "required|array",
-            "roles.*" => "exists:roles,name"
+            "roles.*" => "exists:roles,id"
         ];
     }
 
@@ -35,7 +35,7 @@ class AssignRolesRequest extends FormRequest
         return [
             "roles.required" => "At least one role is required.",
             "roles.array" => "The roles field must be an array.",
-            "roles.*.exists" => "The selected role (:input) is invalid."
+            "roles.*.exists" => "One or more selected roles are invalid."
         ];
     }
 
