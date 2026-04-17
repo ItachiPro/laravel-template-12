@@ -21,8 +21,8 @@ Route::prefix("v1")->group(function(){
             Route::get("/{id}", [UserController::class, "show"])->middleware("permission:SHOW_USER");
             Route::put("/{id}", [UserController::class, "update"])->middleware("permission:UPDATE_USER");
             Route::delete("/{id}", [UserController::class, "destroy"])->middleware("permission:DELETE_USER");
-            Route::post("/{id}/roles", [UserController::class, "assignRoles"])->middleware("permission:ASSIGN_ROLE_USER");
-            Route::post("/{id}/permissions", [UserController::class], "assignPermissions")->middleware("permission:ASSIGN_PERMISSION_USER");
+            Route::put("/{id}/roles", [UserController::class, "assignRoles"])->middleware("permission:ASSIGN_ROLE_USER");
+            Route::put("/{id}/permissions", [UserController::class], "assignPermissions")->middleware("permission:ASSIGN_PERMISSION_USER");
         });
 
         // Role
@@ -32,7 +32,7 @@ Route::prefix("v1")->group(function(){
             Route::get("/{id}", [RoleController::class, "show"])->middleware("permission:SHOW_ROLE");
             Route::put("/{id}", [RoleController::class, "update"])->middleware("permission:UPDATE_ROLE");
             Route::delete("/{id}", [RoleController::class, "destroy"])->middleware("permission:DELETE_ROLE");
-            Route::post("/{id}/permissions", [RoleController::class, "assignPermissions"])->middleware("permission:ASSIGN_PERMISSION_ROLE");
+            Route::put("/{id}/permissions", [RoleController::class, "assignPermissions"])->middleware("permission:ASSIGN_PERMISSION_ROLE");
         });
 
         // Permission
