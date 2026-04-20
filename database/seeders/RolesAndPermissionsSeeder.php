@@ -25,8 +25,8 @@ class RolesAndPermissionsSeeder extends Seeder
                 "CREATE",
                 "UPDATE",
                 "DELETE",
-                "ASSIGN_ROLE_USER",
-                "ASSIGN_PERMISSION_USER",
+                "ASSIGN_ROLE",
+                "ASSIGN_PERMISSION",
             ],
             "ROLE" => [
                 "LIST",
@@ -34,7 +34,7 @@ class RolesAndPermissionsSeeder extends Seeder
                 "CREATE",
                 "UPDATE",
                 "DELETE",
-                "ASSIGN_PERMISSION_ROLE",
+                "ASSIGN_PERMISSION",
             ],
             "PERMISSION" => [
                 "LIST",

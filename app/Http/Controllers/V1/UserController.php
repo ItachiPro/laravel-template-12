@@ -32,7 +32,11 @@ class UserController extends Controller
 
     public function show($id)
     {
-        $user = User::with("roles")->findOrFail($id);
+        $user = User::with([
+            "permissions",
+            "roles",
+            "roles.permissions:id,name"
+        ])->findOrFail($id);
 
         return ApiResponse::successResponse($user, "User retrieved successfully.", 200);
     }
